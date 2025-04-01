@@ -2,6 +2,8 @@ import "./Signup.css";
 import React, { useState } from 'react';
 import {Button, Form} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
+import axios from "axios";
+import toast from 'react-hot-toast';
 
 const Signup = () => {
   //inital the navigation huk
@@ -16,19 +18,14 @@ const Signup = () => {
 
   //method for submit user input into server
   const submitUserInput = async(e) => {
-    e.preventDefault();
     //calling api and connected with server
     try {
-      const response = await fetch("http://localhost:8000/api/register", {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify(formData)
-      })
-      const result = await response.json();
-      console.log(result);
-      navigate("/login");
+      e.preventDefault();
+     await axios.post("http://localhost:8000/api/register", formData)
+            .then((response) => {
+                toast.success(response.data.message,{position:"top-right"});
+                navigate("/login");
+            })   
     } catch (error) {
       console.error(error.message);
     } finally{
