@@ -1,8 +1,11 @@
+import "./Signup.css";
 import React, { useState } from 'react';
 import {Button, Form} from "react-bootstrap";
-import "./Signup.css";
+import {useNavigate} from "react-router-dom";
 
 const Signup = () => {
+  //inital the navigation huk
+  const navigate = useNavigate();
   //state declaration for user inputs
   const [formData, SetformData] = useState({email:'', name:'', password:''});
   //method for handaling user input
@@ -14,9 +17,28 @@ const Signup = () => {
   //method for submit user input into server
   const submitUserInput = async(e) => {
     e.preventDefault();
-    console.log("Email:", formData.email);
-    console.log("Name:", formData.name);
-    console.log("Password:", formData.password);
+    //calling api and connected with server
+    try {
+      const response = await fetch("http://localhost:8000/api/register", {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(formData)
+      })
+      const result = await response.json();
+      console.log(result);
+      navigate("/login");
+    } catch (error) {
+      console.error(error.message);
+    } finally{
+      //after submiting clear user input and empty the form fields
+      SetformData({
+        email:"",
+        name:"",
+        password:"",
+      })
+    }
   }
 
   return (
